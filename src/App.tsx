@@ -1,6 +1,3 @@
-// Replaces the Vite + React starter template in StackBlitz
-// Put this inside your `src/App.tsx`
-
 import { useState, useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
 import {
@@ -8,7 +5,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  signOut
+  signOut,
+  User
 } from 'firebase/auth';
 import {
   getFirestore,
@@ -21,7 +19,7 @@ const firebaseConfig = {
   apiKey: 'AIzaSyDP3rc1JpVERhi5ZPud7AdMs0qROYD34I8',
   authDomain: 'thepuzzlesguy-games.firebaseapp.com',
   projectId: 'thepuzzlesguy-games',
-  storageBucket: 'thepuzzlesguy-games.firebasestorage.app',
+  storageBucket: 'thepuzzlesguy-games.appspot.com',
   messagingSenderId: '1057005514657',
   appId: '1:1057005514657:web:3c4236f75775ccfd6665e0'
 };
@@ -36,7 +34,7 @@ export default function App() {
     { name: 'Songless', image: 'https://songless.vercel.app/favicon.ico', link: 'https://songless.vercel.app/', likes: 0 },
     { name: 'Contexto', image: 'https://contexto.me/favicon.ico', link: 'https://contexto.me/', likes: 0 }
   ]);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
