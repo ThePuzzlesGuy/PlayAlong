@@ -37,20 +37,36 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [likedGames, setLikedGames] = useState<string[]>([]);
 
   useEffect(() => {
-    onAuthStateChanged(auth, setUser);
+    onAuthStateChanged(auth, async (user) => {
+      setUser(user);
+      if (user) {
+        const userRef = doc(db, 'likes', user.uid);
+        const docSnap = await getDoc(userRef);
+        if (docSnap.exists()) {
+          setLikedGames(docSnap.data().liked || []);
+        }
+      } else {
+        setLikedGames([]);
+      }
+    });
   }, []);
 
   const signUp = () => {
-    createUserWithEmailAndPassword(auth, email, password).catch(alert);
+    setError('');
+    createUserWithEmailAndPassword(auth, email, password).catch((err) => setError(err.message));
   };
 
   const logIn = () => {
-    signInWithEmailAndPassword(auth, email, password).catch(alert);
+    setError('');
+    signInWithEmailAndPassword(auth, email, password).catch((err) => setError(err.message));
   };
 
   const logOut = () => {
+    setError('');
     signOut(auth);
   };
 
@@ -60,20 +76,27 @@ export default function App() {
   };
 
   const likeGame = async (index: number) => {
-    if (!user) return alert('Please log in to like a game.');
+    if (!user) {
+      setError('Please log in to like a game.');
+      return;
+    }
 
     const gameName = games[index].name;
     const userRef = doc(db, 'likes', user.uid);
     const userLikesDoc = await getDoc(userRef);
     const userLikes = userLikesDoc.exists() ? userLikesDoc.data() : { liked: [] };
 
-    if (userLikes.liked.includes(gameName)) return alert('You already liked this game.');
+    if (userLikes.liked.includes(gameName)) {
+      setError('You already liked this game.');
+      return;
+    }
 
     const updated = [...games];
     updated[index].likes++;
     setGames(updated);
 
     await setDoc(userRef, { liked: [...userLikes.liked, gameName] });
+    setLikedGames([...userLikes.liked, gameName]);
   };
 
   return (
@@ -86,11 +109,16 @@ export default function App() {
           <button onClick={logOut} style={{ marginTop: '0.5rem', padding: '0.5rem 1rem', background: '#DC2626', color: 'white', border: 'none', borderRadius: '0.5rem' }}>Log Out</button>
         </div>
       ) : (
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem', maxWidth: '400px' }}>
           <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} style={{ padding: '0.5rem' }} />
           <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} style={{ padding: '0.5rem' }} />
-          <button onClick={signUp} style={{ padding: '0.5rem', background: '#22C55E', color: 'white' }}>Sign Up</button>
-          <button onClick={logIn} style={{ padding: '0.5rem', background: '#3B82F6', color: 'white' }}>Login</button>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button onClick={signUp} style={{ padding: '0.5rem', background: '#22C55E', color: 'white' }}>Sign Up</button>
+            <button onClick={logIn} style={{ padding: '0.5rem', background: '#3B82F6', color: 'white' }}>Login</button>
+          </div>
+          {error && (
+            <div style={{ color: '#F87171', marginTop: '0.5rem' }}>{error}</div>
+          )}
         </div>
       )}
 
@@ -106,7 +134,18 @@ export default function App() {
               <h2 style={{ fontSize: '1.125rem', fontWeight: '600' }}>{game.name}</h2>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem' }}>
                 <button onClick={() => window.open(game.link, '_blank')} style={{ padding: '0.25rem 0.75rem', background: '#10B981', border: 'none', borderRadius: '0.375rem', color: 'white' }}>Play</button>
-                <button onClick={() => likeGame(index)} style={{ padding: '0.25rem 0.75rem', background: '#EF4444', border: 'none', borderRadius: '0.375rem', color: 'white' }}>❤️ {game.likes}</button>
+                <button
+                  onClick={() => likeGame(index)}
+                  style={{
+                    padding: '0.25rem 0.75rem',
+                    background: likedGames.includes(game.name) ? '#FBBF24' : '#EF4444',
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    color: 'white'
+                  }}
+                >
+                  ❤️ {game.likes}
+                </button>
               </div>
             </div>
           </div>
