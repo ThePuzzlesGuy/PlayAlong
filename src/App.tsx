@@ -30,42 +30,38 @@ const db = getFirestore(app);
 
 export default function App() {
   const [games, setGames] = useState([
-    { name: 'Wordle', image: 'https://i.imgur.com/nRy1OdJ.png', link: 'https://www.nytimes.com/games/wordle/index.html', likes: 0, video: 'https://youtube.com/embed/7U1YAtQ4K6w?si=xq7UymswhHJ_kVCK' },
-    { name: 'Songless', image: 'https://i.imgur.com/NgGmhh2.jpeg', link: 'https://songless.vercel.app/', likes: 0, video: 'https://youtube.com/embed/DXOoQCBEMRE?si=DaWsVNtPl5F02KOp' },
-    { name: 'Contexto', image: 'https://i.imgur.com/MFg6JjH.jpeg', link: 'https://contexto.me/', likes: 0, video: 'https://youtube.com/embed/cvCke8mkk50?si=-wmkq657oemK7p1v' }
+    {
+      name: 'Wordle',
+      image: 'https://i.imgur.com/nRy1OdJ.png',
+      link: 'https://www.nytimes.com/games/wordle/index.html',
+      likes: 0,
+      video: 'https://youtube.com/embed/7U1YAtQ4K6w?si=xq7UymswhHJ_kVCK',
+      description: 'Guess the five-letter word in six tries. A daily word puzzle from The New York Times.'
+    },
+    {
+      name: 'Songless',
+      image: 'https://i.imgur.com/NgGmhh2.jpeg',
+      link: 'https://songless.vercel.app/',
+      likes: 0,
+      video: 'https://youtube.com/embed/DXOoQCBEMRE?si=DaWsVNtPl5F02KOp',
+      description: 'Identify a song in just a split second.'
+    },
+    {
+      name: 'Contexto',
+      image: 'https://i.imgur.com/MFg6JjH.jpeg',
+      link: 'https://contexto.me/',
+      likes: 0,
+      video: 'https://youtube.com/embed/cvCke8mkk50?si=-wmkq657oemK7p1v',
+      description: 'Guess the secret word. With each guess, you will be rated on how contextually relevant your word was to the secret word.'
+    }
   ]);
-  const [games, setGames] = useState([
-  {
-    name: 'Wordle',
-    image: 'https://i.imgur.com/nRy1OdJ.png',
-    link: 'https://www.nytimes.com/games/wordle/index.html',
-    likes: 0,
-    video: 'https://youtube.com/embed/7U1YAtQ4K6w?si=xq7UymswhHJ_kVCK',
-    description: 'Guess the five-letter word in six tries. A daily word puzzle from The New York Times.'
-  },
-  {
-    name: 'Songless',
-    image: 'https://i.imgur.com/NgGmhh2.jpeg',
-    link: 'https://songless.vercel.app/',
-    likes: 0,
-    video: 'https://youtube.com/embed/DXOoQCBEMRE?si=DaWsVNtPl5F02KOp',
-    description: 'Identify a song in just a split second.'
-  },
-  {
-    name: 'Contexto',
-    image: 'https://i.imgur.com/MFg6JjH.jpeg',
-    link: 'https://contexto.me/',
-    likes: 0,
-    video: 'https://youtube.com/embed/cvCke8mkk50?si=-wmkq657oemK7p1v',
-    description: 'Guess the secret word. With each guess, you will be rated on how contextually relevant your word was to the secret word.'
-  }
-]);
-
   const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [likedGames, setLikedGames] = useState<string[]>([]);
+  const [videoEnabled, setVideoEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(false);
 
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
@@ -140,7 +136,7 @@ export default function App() {
     const gameDoc = await getDoc(gameRef);
     const currentLikes = gameDoc.exists() ? gameDoc.data().likes || 0 : 0;
     const updatedLikes = currentLikes + 1;
-    await setDoc(gameRef, { likes: updatedLikes }, { merge: true });
+    await setDoc(gameRef, { likes: updatedLikes });
 
     const updatedGames = [...games];
     updatedGames[index].likes = updatedLikes;
@@ -150,7 +146,12 @@ export default function App() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#111827', color: 'white', padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>@ThePuzzlesGuy Game Library</h1>
+      <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>@ThePuzzlesGuy Game Library</h1>
+
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+        <label><input type="checkbox" checked={videoEnabled} onChange={() => { setVideoEnabled(!videoEnabled); if (!videoEnabled) setSoundEnabled(false); }} /> Show Videos</label>
+        <label><input type="checkbox" checked={soundEnabled} disabled={!videoEnabled} onChange={() => setSoundEnabled(!soundEnabled)} /> Sound</label>
+      </div>
 
       {user ? (
         <div style={{ marginBottom: '1rem' }}>
@@ -165,9 +166,7 @@ export default function App() {
             <button onClick={signUp} style={{ padding: '0.5rem', background: '#22C55E', color: 'white' }}>Sign Up</button>
             <button onClick={logIn} style={{ padding: '0.5rem', background: '#3B82F6', color: 'white' }}>Login</button>
           </div>
-          {error && (
-            <div style={{ color: '#F87171', marginTop: '0.5rem' }}>{error}</div>
-          )}
+          {error && <div style={{ color: '#F87171', marginTop: '0.5rem' }}>{error}</div>}
         </div>
       )}
 
@@ -177,41 +176,24 @@ export default function App() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1.5rem', width: '100%', maxWidth: '1200px' }}>
         {games.map((game, index) => (
-          <div
-            key={game.name}
-            style={{
-              background: '#1F2937',
-              borderRadius: '0.5rem',
-              overflow: 'hidden',
-              position: 'relative',
-              height: '160px',
-              cursor: 'pointer'
-            }}
-            onMouseEnter={(e) => {
-              const vid = e.currentTarget.querySelector('iframe') as HTMLIFrameElement;
-              if (vid) vid.style.display = 'block';
-            }}
-            onMouseLeave={(e) => {
-              const vid = e.currentTarget.querySelector('iframe') as HTMLIFrameElement;
-              if (vid) vid.style.display = 'none';
-            }}
-          >
-            <img src={game.image} alt={game.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            <iframe src={game.video} style={{ display: 'none', position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} allow="autoplay" title={game.name}></iframe>
+          <div key={game.name} style={{ background: '#1F2937', borderRadius: '0.5rem', overflow: 'hidden', position: 'relative', height: '160px', cursor: 'pointer' }}>
+            <img src={game.image} alt={game.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: videoEnabled ? 'none' : 'block' }} />
+            {videoEnabled && (
+              <iframe
+                src={`${game.video}${soundEnabled ? '&mute=0' : '&mute=1'}`}
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                allow="autoplay"
+                title={game.name}
+              ></iframe>
+            )}
             <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', background: 'rgba(0,0,0,0.6)', padding: '0.5rem' }}>
               <h2 style={{ fontSize: '1rem', fontWeight: '600' }}>{game.name}</h2>
               <p style={{ fontSize: '0.875rem', marginTop: '0.25rem' }}>{game.description}</p>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.25rem' }}>
-                <button onClick={(e) => { e.stopPropagation(); window.open(game.link, '_blank'); }} style={{ padding: '0.25rem 0.75rem', background: '#10B981', border: 'none', borderRadius: '0.375rem', color: 'white' }}>Play</button>
+                <button onClick={() => window.open(game.link, '_blank')} style={{ padding: '0.25rem 0.75rem', background: '#10B981', border: 'none', borderRadius: '0.375rem', color: 'white' }}>Play</button>
                 <button
-                  onClick={(e) => { e.stopPropagation(); likeGame(index); }}
-                  style={{
-                    padding: '0.25rem 0.75rem',
-                    background: likedGames.includes(game.name) ? '#FBBF24' : '#EF4444',
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    color: 'white'
-                  }}
+                  onClick={() => likeGame(index)}
+                  style={{ padding: '0.25rem 0.75rem', background: likedGames.includes(game.name) ? '#FBBF24' : '#EF4444', border: 'none', borderRadius: '0.375rem', color: 'white' }}
                 >
                   ❤️ {game.likes}
                 </button>
