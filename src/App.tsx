@@ -30,9 +30,9 @@ const db = getFirestore(app);
 
 export default function App() {
   const [games, setGames] = useState([
-    { name: 'Wordle', image: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Wordle_logo.svg', link: 'https://www.nytimes.com/games/wordle/index.html', likes: 0 },
-    { name: 'Songless', image: 'https://songless.vercel.app/favicon.ico', link: 'https://songless.vercel.app/', likes: 0 },
-    { name: 'Contexto', image: 'https://contexto.me/favicon.ico', link: 'https://contexto.me/', likes: 0 }
+    { name: 'Wordle', image: 'https://imgur.com/nRy1OdJ', link: 'https://www.nytimes.com/games/wordle/index.html', likes: 0 },
+    { name: 'Songless', image: 'https://imgur.com/MFg6JjH', link: 'https://songless.vercel.app/', likes: 0 },
+    { name: 'Contexto', image: 'https://imgur.com/NgGmhh2', link: 'https://contexto.me/', likes: 0 }
   ]);
   const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState('');
