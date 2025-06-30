@@ -78,18 +78,16 @@ export default function App() {
     <div
       style={{
         minHeight: '100vh',
+        display: 'grid',
+        placeItems: 'center',        // centers horizontally and vertically
         background: '#171a21',
-        color: '#ffffff',
         padding: '2rem',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontFamily: 'Segoe UI, sans-serif'
+        color: '#ffffff',
+        fontFamily: 'Segoe UI, sans-serif',
+        boxSizing: 'border-box',
       }}
     >
-      {/* Here’s the fix: maxWidth and margin auto to center the inner container */}
-      <div style={{ maxWidth: '900px', margin: '0 auto', width: '100%' }}>
+      <div style={{ maxWidth: 900, width: '100%', boxSizing: 'border-box' }}>
         <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '2rem', textAlign: 'center' }}>
           @ThePuzzlesGuy Game Library
         </h1>
@@ -105,7 +103,7 @@ export default function App() {
                 background: '#dc2626',
                 color: 'white',
                 border: 'none',
-                borderRadius: '0.5rem'
+                borderRadius: '0.5rem',
               }}
             >
               Log Out
@@ -119,7 +117,7 @@ export default function App() {
               gap: '0.5rem',
               marginBottom: '2rem',
               maxWidth: '400px',
-              marginInline: 'auto'
+              marginInline: 'auto',
             }}
           >
             <input
@@ -162,7 +160,7 @@ export default function App() {
               color: 'white',
               border: 'none',
               borderRadius: '0.5rem',
-              fontSize: '1rem'
+              fontSize: '1rem',
             }}
           >
             Play Random Game
@@ -174,7 +172,7 @@ export default function App() {
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
             gap: '1.5rem',
-            justifyItems: 'center'
+            justifyItems: 'center',
           }}
         >
           {games.map((game) => (
@@ -187,10 +185,10 @@ export default function App() {
                 borderRadius: '0.5rem',
                 overflow: 'hidden',
                 boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-                transition: 'transform 0.2s ease-in-out'
+                transition: 'transform 0.2s ease-in-out',
               }}
             >
-              <img src={game.image} alt={game.name} style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
+              <img src={game.image} alt={game.name} style={{ width: '100%', height: 140, objectFit: 'cover' }} />
               <div style={{ padding: '0.75rem', color: '#c7d5e0' }}>
                 <h2 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.25rem' }}>{game.name}</h2>
                 <p style={{ fontSize: '0.875rem', color: '#acb2b8', marginBottom: '0.5rem' }}>{game.description}</p>
@@ -203,7 +201,7 @@ export default function App() {
                     border: 'none',
                     borderRadius: '0.25rem',
                     fontWeight: '600',
-                    width: '100%'
+                    width: '100%',
                   }}
                 >
                   Play
