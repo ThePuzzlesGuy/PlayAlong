@@ -75,39 +75,138 @@ export default function App() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#171a21', color: '#ffffff', padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', fontFamily: 'Segoe UI, sans-serif' }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: '#171a21',
+        color: '#ffffff',
+        padding: '2rem',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center', // Added for vertical centering
+        fontFamily: 'Segoe UI, sans-serif'
+      }}
+    >
       <div style={{ width: '100%', maxWidth: '1600px' }}>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '2rem', textAlign: 'center' }}>@ThePuzzlesGuy Game Library</h1>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '2rem', textAlign: 'center' }}>
+          @ThePuzzlesGuy Game Library
+        </h1>
 
         {user ? (
           <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
             <p>Welcome, {user.email}</p>
-            <button onClick={logOut} style={{ marginTop: '0.5rem', padding: '0.5rem 1rem', background: '#dc2626', color: 'white', border: 'none', borderRadius: '0.5rem' }}>Log Out</button>
+            <button
+              onClick={logOut}
+              style={{
+                marginTop: '0.5rem',
+                padding: '0.5rem 1rem',
+                background: '#dc2626',
+                color: 'white',
+                border: 'none',
+                borderRadius: '0.5rem'
+              }}
+            >
+              Log Out
+            </button>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '2rem', maxWidth: '400px', marginInline: 'auto' }}>
-            <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #444' }} />
-            <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #444' }} />
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.5rem',
+              marginBottom: '2rem',
+              maxWidth: '400px',
+              marginInline: 'auto'
+            }}
+          >
+            <input
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #444' }}
+            />
+            <input
+              placeholder="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #444' }}
+            />
             <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
-              <button onClick={signUp} style={{ padding: '0.5rem 1rem', background: '#22c55e', color: 'white', border: 'none', borderRadius: '0.5rem' }}>Sign Up</button>
-              <button onClick={logIn} style={{ padding: '0.5rem 1rem', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '0.5rem' }}>Login</button>
+              <button
+                onClick={signUp}
+                style={{ padding: '0.5rem 1rem', background: '#22c55e', color: 'white', border: 'none', borderRadius: '0.5rem' }}
+              >
+                Sign Up
+              </button>
+              <button
+                onClick={logIn}
+                style={{ padding: '0.5rem 1rem', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '0.5rem' }}
+              >
+                Login
+              </button>
             </div>
             {error && <div style={{ color: '#f87171', marginTop: '0.5rem' }}>{error}</div>}
           </div>
         )}
 
         <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
-          <button onClick={openRandomGame} style={{ padding: '0.75rem 1.5rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '0.5rem', fontSize: '1rem' }}>Play Random Game</button>
+          <button
+            onClick={openRandomGame}
+            style={{
+              padding: '0.75rem 1.5rem',
+              background: '#2563eb',
+              color: 'white',
+              border: 'none',
+              borderRadius: '0.5rem',
+              fontSize: '1rem'
+            }}
+          >
+            Play Random Game
+          </button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem', justifyItems: 'center' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+            gap: '1.5rem',
+            justifyItems: 'center'
+          }}
+        >
           {games.map((game) => (
-            <div key={game.name} style={{ width: '100%', maxWidth: '250px', background: '#1b2838', borderRadius: '0.5rem', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.2)', transition: 'transform 0.2s ease-in-out' }}>
+            <div
+              key={game.name}
+              style={{
+                width: '100%',
+                maxWidth: '250px',
+                background: '#1b2838',
+                borderRadius: '0.5rem',
+                overflow: 'hidden',
+                boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+                transition: 'transform 0.2s ease-in-out'
+              }}
+            >
               <img src={game.image} alt={game.name} style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
               <div style={{ padding: '0.75rem', color: '#c7d5e0' }}>
                 <h2 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.25rem' }}>{game.name}</h2>
                 <p style={{ fontSize: '0.875rem', color: '#acb2b8', marginBottom: '0.5rem' }}>{game.description}</p>
-                <button onClick={() => window.open(game.link, '_blank')} style={{ padding: '0.4rem 0.8rem', background: '#66c0f4', color: '#0e1c25', border: 'none', borderRadius: '0.25rem', fontWeight: '600', width: '100%' }}>Play</button>
+                <button
+                  onClick={() => window.open(game.link, '_blank')}
+                  style={{
+                    padding: '0.4rem 0.8rem',
+                    background: '#66c0f4',
+                    color: '#0e1c25',
+                    border: 'none',
+                    borderRadius: '0.25rem',
+                    fontWeight: '600',
+                    width: '100%'
+                  }}
+                >
+                  Play
+                </button>
               </div>
             </div>
           ))}
