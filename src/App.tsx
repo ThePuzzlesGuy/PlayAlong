@@ -84,11 +84,12 @@ export default function App() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center', // Added for vertical centering
+        justifyContent: 'center',
         fontFamily: 'Segoe UI, sans-serif'
       }}
     >
-      <div style={{ width: '100%', maxWidth: '1600px' }}>
+      {/* Here’s the fix: maxWidth and margin auto to center the inner container */}
+      <div style={{ maxWidth: '900px', margin: '0 auto', width: '100%' }}>
         <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '2rem', textAlign: 'center' }}>
           @ThePuzzlesGuy Game Library
         </h1>
