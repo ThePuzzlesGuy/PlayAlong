@@ -30,9 +30,9 @@ const db = getFirestore(app);
 
 export default function App() {
   const [games, setGames] = useState([
-    { name: 'Wordle', image: 'https://imgur.com/nRy1OdJ', link: 'https://www.nytimes.com/games/wordle/index.html', likes: 0 },
-    { name: 'Songless', image: 'https://imgur.com/MFg6JjH', link: 'https://songless.vercel.app/', likes: 0 },
-    { name: 'Contexto', image: 'https://imgur.com/NgGmhh2', link: 'https://contexto.me/', likes: 0 }
+    { name: 'Wordle', image: 'https://i.imgur.com/nRy1OdJ.png', link: 'https://www.nytimes.com/games/wordle/index.html', likes: 0 },
+    { name: 'Songless', image: 'https://i.imgur.com/MFg6JjH.jpeg', link: 'https://songless.vercel.app/', likes: 0 },
+    { name: 'Contexto', image: 'https://i.imgur.com/NgGmhh2.jpeg', link: 'https://contexto.me/', likes: 0 }
   ]);
   const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState('');
@@ -43,6 +43,7 @@ export default function App() {
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       setUser(user);
+
       if (user) {
         const userRef = doc(db, 'likes', user.uid);
         const docSnap = await getDoc(userRef);
@@ -52,6 +53,18 @@ export default function App() {
       } else {
         setLikedGames([]);
       }
+
+      const updated = await Promise.all(
+        games.map(async (game) => {
+          const ref = doc(db, 'games', game.name);
+          const snap = await getDoc(ref);
+          return {
+            ...game,
+            likes: snap.exists() ? snap.data().likes || 0 : 0
+          };
+        })
+      );
+      setGames(updated);
     });
   }, []);
 
@@ -81,7 +94,9 @@ export default function App() {
       return;
     }
 
-    const gameName = games[index].name;
+    const game = games[index];
+    const gameName = game.name;
+
     const userRef = doc(db, 'likes', user.uid);
     const userLikesDoc = await getDoc(userRef);
     const userLikes = userLikesDoc.exists() ? userLikesDoc.data() : { liked: [] };
@@ -91,12 +106,19 @@ export default function App() {
       return;
     }
 
-    const updated = [...games];
-    updated[index].likes++;
-    setGames(updated);
+    const newLiked = [...userLikes.liked, gameName];
+    await setDoc(userRef, { liked: newLiked });
 
-    await setDoc(userRef, { liked: [...userLikes.liked, gameName] });
-    setLikedGames([...userLikes.liked, gameName]);
+    const gameRef = doc(db, 'games', gameName);
+    const gameDoc = await getDoc(gameRef);
+    const currentLikes = gameDoc.exists() ? gameDoc.data().likes || 0 : 0;
+    const updatedLikes = currentLikes + 1;
+    await setDoc(gameRef, { likes: updatedLikes });
+
+    const updatedGames = [...games];
+    updatedGames[index].likes = updatedLikes;
+    setGames(updatedGames);
+    setLikedGames(newLiked);
   };
 
   return (
