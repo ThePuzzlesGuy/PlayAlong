@@ -34,31 +34,31 @@ export default function App() {
       name: 'Wordle',
       image: 'https://i.imgur.com/nRy1OdJ.png',
       link: 'https://www.nytimes.com/games/wordle/index.html',
-      description: 'Guess the five-letter word in six tries. Challenge your brain daily with this viral word puzzle that keeps track of your streak.'
+      description: 'Guess the five-letter word in six tries. Each time you guess, the letters you use are color-coded, so pay attention!'
     },
     {
       name: 'Songless',
       image: 'https://i.imgur.com/NgGmhh2.jpeg',
       link: 'https://songless.vercel.app/',
-      description: 'Identify a song in a split second. Test your musical memory in this high-speed guessing game that rewards your ears.'
+      description: 'Identify a song in a split second. Test your musical memory in this high-speed guessing game.'
     },
     {
       name: 'Contexto',
       image: 'https://i.imgur.com/MFg6JjH.jpeg',
       link: 'https://contexto.me/',
-      description: 'Guess the secret word based on context. Type words and see how close you are semantically — powered by AI.'
+      description: 'Guess the secret word based on context. Type words and see how close you are semantically.'
     },
     {
       name: 'DaisyChain',
       image: 'https://via.placeholder.com/250x140?text=DaisyChain',
       link: 'https://www.daisychain.gg/',
-      description: 'Connect words or numbers in a chain puzzle—easy to learn, hard to master, and fun every day.'
+      description: 'Connect words in a chain puzzle. Each subsequent word makes a two word phrase with the previous word!'
     },
     {
       name: 'Frenzle',
       image: 'https://via.placeholder.com/250x140?text=Frenzle',
       link: 'https://frenzle.com/',
-      description: 'A fast word scramble that gets your brain going. How many words can you find before time runs out?'
+      description: 'A fast word finder that gets your brain going. How many words can you find before board fills up?'
     },
     {
       name: 'Spelling Bee (Free)',
@@ -70,31 +70,31 @@ export default function App() {
       name: 'Cladder',
       image: 'https://via.placeholder.com/250x140?text=Cladder',
       link: 'https://playcladder.com/',
-      description: 'Build ladders of words by changing one letter at a time. It’s simple but really addictive.'
+      description: 'Solve the question by changing just one letter at a time- racing against the clock, this word-stepping game puts your mind to the test.'
     },
     {
       name: 'Maketen',
       image: 'https://via.placeholder.com/250x140?text=Maketen',
       link: 'https://maketen.vercel.app/',
-      description: 'Draw connections between words to find hidden relationships. A neat twist on word puzzles.'
+      description: 'Use each number provided only one time, and use them in any equation necessary to equal 10!'
     },
     {
       name: 'Circuits',
       image: 'https://via.placeholder.com/250x140?text=Circuits',
       link: 'https://circuitsgame.com/',
-      description: 'Solve circuit puzzles by routing power with the right pieces. Clean design and smooth gameplay.'
+      description: 'Solve the puzzle by connecting words with one another- finish the circut by finding all the two word phrases.'
     },
     {
       name: 'Searchle',
       image: 'https://via.placeholder.com/250x140?text=Searchle',
       link: 'https://searchle.net/',
-      description: 'Guess the daily search term in six tries. You get feedback on how common your guesses are.'
+      description: 'Can you guess what the most popular Google search result is for (blank)? With each guess, every letter you get right will be color-coded, so pay attention, and use what you search!'
     },
     {
       name: 'Colorfle',
       image: 'https://via.placeholder.com/250x140?text=Colorfle',
       link: 'https://colorfle.com/',
-      description: 'Pick the right color code by testing your color sense. Simple pick and learn mechanics.'
+      description: 'Pick the right color combination by testing your knowledge on color theory. Test three colors while attempting to match the color swatch of the day.'
     }
   ]);
 
