@@ -36,7 +36,7 @@ export default function App() {
       link: 'https://www.nytimes.com/games/wordle/index.html',
       likes: 0,
       video: 'https://youtube.com/embed/7U1YAtQ4K6w?si=xq7UymswhHJ_kVCK',
-      description: 'Guess the five-letter word in six tries. A daily word puzzle from The New York Times.'
+      description: 'Guess the five-letter word in six tries.'
     },
     {
       name: 'Songless',
@@ -44,7 +44,7 @@ export default function App() {
       link: 'https://songless.vercel.app/',
       likes: 0,
       video: 'https://youtube.com/embed/DXOoQCBEMRE?si=DaWsVNtPl5F02KOp',
-      description: 'Identify a song in just a split second.'
+      description: 'Identify a song in a split second.'
     },
     {
       name: 'Contexto',
@@ -52,7 +52,7 @@ export default function App() {
       link: 'https://contexto.me/',
       likes: 0,
       video: 'https://youtube.com/embed/cvCke8mkk50?si=-wmkq657oemK7p1v',
-      description: 'Guess the secret word. With each guess, you will be rated on how contextually relevant your word was to the secret word.'
+      description: 'Guess the secret word based on context.'
     }
   ]);
 
@@ -134,7 +134,7 @@ export default function App() {
     const gameDoc = await getDoc(gameRef);
     const currentLikes = gameDoc.exists() ? gameDoc.data().likes || 0 : 0;
     const updatedLikes = currentLikes + 1;
-    await setDoc(gameRef, { likes: updatedLikes });
+    await setDoc(gameRef, { likes: updatedLikes }, { merge: true });
 
     const updatedGames = [...games];
     updatedGames[index].likes = updatedLikes;
@@ -143,54 +143,55 @@ export default function App() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', width: '100%', background: '#111827', color: 'white', padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>@ThePuzzlesGuy Game Library</h1>
+    <div style={{ minHeight: '100vh', background: '#111827', color: 'white', padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div style={{ maxWidth: '1600px', width: '100%', textAlign: 'center' }}>
+        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>@ThePuzzlesGuy Game Library</h1>
 
-      {user ? (
-        <div style={{ marginBottom: '1rem' }}>
-          <p>Welcome, {user.email}</p>
-          <button onClick={logOut} style={{ marginTop: '0.5rem', padding: '0.5rem 1rem', background: '#DC2626', color: 'white', border: 'none', borderRadius: '0.5rem' }}>Log Out</button>
-        </div>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem', maxWidth: '400px' }}>
-          <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} style={{ padding: '0.5rem' }} />
-          <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} style={{ padding: '0.5rem' }} />
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button onClick={signUp} style={{ padding: '0.5rem', background: '#22C55E', color: 'white' }}>Sign Up</button>
-            <button onClick={logIn} style={{ padding: '0.5rem', background: '#3B82F6', color: 'white' }}>Login</button>
+        {user ? (
+          <div style={{ marginBottom: '1rem' }}>
+            <p>Welcome, {user.email}</p>
+            <button onClick={logOut} style={{ marginTop: '0.5rem', padding: '0.5rem 1rem', background: '#DC2626', color: 'white', border: 'none', borderRadius: '0.5rem' }}>Log Out</button>
           </div>
-          {error && <div style={{ color: '#F87171', marginTop: '0.5rem' }}>{error}</div>}
-        </div>
-      )}
-
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
-        <button onClick={openRandomGame} style={{ padding: '0.5rem 1rem', background: '#2563EB', border: 'none', borderRadius: '0.5rem', color: 'white' }}>Play Random Game</button>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1.5rem', width: '100%', maxWidth: '1600px' }}>
-        {games.map((game, index) => (
-          <div key={game.name} style={{ position: 'relative', borderRadius: '0.5rem', overflow: 'hidden', background: '#1F2937' }}>
-            <div style={{ position: 'relative', paddingTop: '56.25%', cursor: 'pointer' }}
-              onMouseEnter={(e) => {
-                const iframe = e.currentTarget.querySelector('iframe');
-                if (iframe) iframe.style.display = 'block';
-              }}
-              onMouseLeave={(e) => {
-                const iframe = e.currentTarget.querySelector('iframe');
-                if (iframe) iframe.style.display = 'none';
-              }}>
-              <img src={game.image} alt={game.name} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-              <iframe
-                src={game.video + '&autoplay=1&mute=1'}
-                title={game.name}
-                style={{ display: 'none', position: 'absolute', top: '-10%', left: '-10%', width: '120%', height: '120%', zIndex: 2, border: 'none' }}
-                allow="autoplay"
-              ></iframe>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem', maxWidth: '400px', marginInline: 'auto' }}>
+            <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} style={{ padding: '0.5rem' }} />
+            <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} style={{ padding: '0.5rem' }} />
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+              <button onClick={signUp} style={{ padding: '0.5rem', background: '#22C55E', color: 'white' }}>Sign Up</button>
+              <button onClick={logIn} style={{ padding: '0.5rem', background: '#3B82F6', color: 'white' }}>Login</button>
             </div>
-            <div style={{ padding: '0.5rem' }}>
-              <h2 style={{ fontSize: '1rem', fontWeight: '600' }}>{game.name}</h2>
-              <p style={{ fontSize: '0.875rem', marginTop: '0.25rem' }}>{game.description}</p>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.25rem' }}>
+            {error && <div style={{ color: '#F87171', marginTop: '0.5rem' }}>{error}</div>}
+          </div>
+        )}
+
+        <div style={{ marginBottom: '1.5rem' }}>
+          <button onClick={openRandomGame} style={{ padding: '0.5rem 1rem', background: '#2563EB', border: 'none', borderRadius: '0.5rem', color: 'white' }}>Play Random Game</button>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1.5rem' }}>
+          {games.map((game, index) => (
+            <div key={game.name} style={{ position: 'relative', overflow: 'hidden', borderRadius: '0.5rem', background: '#1F2937' }}>
+              <div
+                style={{ position: 'relative', width: '100%', paddingTop: '56.25%', cursor: 'pointer' }}
+                onMouseEnter={(e) => {
+                  const iframe = e.currentTarget.querySelector('iframe') as HTMLIFrameElement;
+                  if (iframe) iframe.style.display = 'block';
+                }}
+                onMouseLeave={(e) => {
+                  const iframe = e.currentTarget.querySelector('iframe') as HTMLIFrameElement;
+                  if (iframe) iframe.style.display = 'none';
+                }}
+              >
+                <img src={game.image} alt={game.name} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 1 }} />
+                <iframe
+                  src={game.video + '&autoplay=1'}
+                  title={game.name}
+                  allow="autoplay; encrypted-media"
+                  style={{ display: 'none', position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', zIndex: 2, border: 'none' }}
+                ></iframe>
+                <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.6)', padding: '0.25rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.875rem' }}>{game.name}</div>
+              </div>
+              <div style={{ padding: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
                 <button onClick={() => window.open(game.link, '_blank')} style={{ padding: '0.25rem 0.75rem', background: '#10B981', border: 'none', borderRadius: '0.375rem', color: 'white' }}>Play</button>
                 <button
                   onClick={() => likeGame(index)}
@@ -200,8 +201,8 @@ export default function App() {
                 </button>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
