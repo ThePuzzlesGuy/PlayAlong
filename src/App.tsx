@@ -21,25 +21,32 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+type Game = {
+  name: string;
+  image: string;
+  link: string;
+  description: string;
+};
+
 export default function App() {
-  const [games] = useState([
+  const [games] = useState<Game[]>([
     {
       name: 'Wordle',
       image: 'https://i.imgur.com/nRy1OdJ.png',
       link: 'https://www.nytimes.com/games/wordle/index.html',
-      description: 'Guess the five-letter word in six tries.'
+      description: 'Guess the five-letter word in six tries. Challenge your brain daily with this viral word puzzle that keeps track of your streak.'
     },
     {
       name: 'Songless',
       image: 'https://i.imgur.com/NgGmhh2.jpeg',
       link: 'https://songless.vercel.app/',
-      description: 'Identify a song in a split second.'
+      description: 'Identify a song in a split second. Test your musical memory in this high-speed guessing game that rewards your ears.'
     },
     {
       name: 'Contexto',
       image: 'https://i.imgur.com/MFg6JjH.jpeg',
       link: 'https://contexto.me/',
-      description: 'Guess the secret word based on context.'
+      description: 'Guess the secret word based on context. Type words and see how close you are semantically — powered by AI.'
     }
   ]);
 
@@ -47,6 +54,7 @@ export default function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [modalGame, setModalGame] = useState<Game | null>(null);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -79,7 +87,7 @@ export default function App() {
       style={{
         minHeight: '100vh',
         display: 'grid',
-        placeItems: 'center',        // centers horizontally and vertically
+        placeItems: 'center',
         background: '#171a21',
         padding: '2rem',
         color: '#ffffff',
@@ -185,13 +193,43 @@ export default function App() {
                 borderRadius: '0.5rem',
                 overflow: 'hidden',
                 boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-                transition: 'transform 0.2s ease-in-out',
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
               }}
             >
               <img src={game.image} alt={game.name} style={{ width: '100%', height: 140, objectFit: 'cover' }} />
-              <div style={{ padding: '0.75rem', color: '#c7d5e0' }}>
+              <div style={{ padding: '0.75rem', color: '#c7d5e0', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                 <h2 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.25rem' }}>{game.name}</h2>
-                <p style={{ fontSize: '0.875rem', color: '#acb2b8', marginBottom: '0.5rem' }}>{game.description}</p>
+                <p
+                  style={{
+                    fontSize: '0.875rem',
+                    color: '#acb2b8',
+                    marginBottom: '0.5rem',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {game.description}
+                </p>
+                <button
+                  onClick={() => setModalGame(game)}
+                  style={{
+                    background: 'transparent',
+                    color: '#66c0f4',
+                    border: 'none',
+                    fontSize: '0.8rem',
+                    cursor: 'pointer',
+                    marginBottom: '0.5rem',
+                    textAlign: 'left',
+                    padding: 0,
+                  }}
+                >
+                  Read More
+                </button>
                 <button
                   onClick={() => window.open(game.link, '_blank')}
                   style={{
@@ -211,6 +249,70 @@ export default function App() {
           ))}
         </div>
       </div>
+
+      {/* Modal */}
+      {modalGame && (
+        <div
+          onClick={() => setModalGame(null)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: '#1b2838',
+              color: '#c7d5e0',
+              padding: '2rem',
+              borderRadius: '0.5rem',
+              maxWidth: '400px',
+              width: '90%',
+              textAlign: 'center',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+            }}
+          >
+            <h2 style={{ marginBottom: '1rem' }}>{modalGame.name}</h2>
+            <img src={modalGame.image} alt={modalGame.name} style={{ width: '100%', borderRadius: '0.25rem', marginBottom: '1rem' }} />
+            <p style={{ marginBottom: '1rem' }}>{modalGame.description}</p>
+            <button
+              onClick={() => window.open(modalGame.link, '_blank')}
+              style={{
+                padding: '0.5rem 1rem',
+                background: '#66c0f4',
+                color: '#0e1c25',
+                border: 'none',
+                borderRadius: '0.25rem',
+                fontWeight: '600',
+                marginRight: '1rem',
+              }}
+            >
+              Play Game
+            </button>
+            <button
+              onClick={() => setModalGame(null)}
+              style={{
+                padding: '0.5rem 1rem',
+                background: '#dc2626',
+                color: 'white',
+                border: 'none',
+                borderRadius: '0.25rem',
+                fontWeight: '600',
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
