@@ -55,18 +55,16 @@ export default function App() {
       description: 'Guess the secret word. With each guess, you will be rated on how contextually relevant your word was to the secret word.'
     }
   ]);
+
   const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [likedGames, setLikedGames] = useState<string[]>([]);
-  const [videoEnabled, setVideoEnabled] = useState(true);
-  const [soundEnabled, setSoundEnabled] = useState(false);
 
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       setUser(user);
-
       if (user) {
         const userRef = doc(db, 'likes', user.uid);
         const docSnap = await getDoc(userRef);
@@ -145,13 +143,8 @@ export default function App() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#111827', color: 'white', padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>@ThePuzzlesGuy Game Library</h1>
-
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-        <label><input type="checkbox" checked={videoEnabled} onChange={() => { setVideoEnabled(!videoEnabled); if (!videoEnabled) setSoundEnabled(false); }} /> Show Videos</label>
-        <label><input type="checkbox" checked={soundEnabled} disabled={!videoEnabled} onChange={() => setSoundEnabled(!soundEnabled)} /> Sound</label>
-      </div>
+    <div style={{ minHeight: '100vh', width: '100%', background: '#111827', color: 'white', padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>@ThePuzzlesGuy Game Library</h1>
 
       {user ? (
         <div style={{ marginBottom: '1rem' }}>
@@ -174,19 +167,27 @@ export default function App() {
         <button onClick={openRandomGame} style={{ padding: '0.5rem 1rem', background: '#2563EB', border: 'none', borderRadius: '0.5rem', color: 'white' }}>Play Random Game</button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1.5rem', width: '100%', maxWidth: '1200px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1.5rem', width: '100%', maxWidth: '1600px' }}>
         {games.map((game, index) => (
-          <div key={game.name} style={{ background: '#1F2937', borderRadius: '0.5rem', overflow: 'hidden', position: 'relative', height: '160px', cursor: 'pointer' }}>
-            <img src={game.image} alt={game.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: videoEnabled ? 'none' : 'block' }} />
-            {videoEnabled && (
+          <div key={game.name} style={{ position: 'relative', borderRadius: '0.5rem', overflow: 'hidden', background: '#1F2937' }}>
+            <div style={{ position: 'relative', paddingTop: '56.25%', cursor: 'pointer' }}
+              onMouseEnter={(e) => {
+                const iframe = e.currentTarget.querySelector('iframe');
+                if (iframe) iframe.style.display = 'block';
+              }}
+              onMouseLeave={(e) => {
+                const iframe = e.currentTarget.querySelector('iframe');
+                if (iframe) iframe.style.display = 'none';
+              }}>
+              <img src={game.image} alt={game.name} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
               <iframe
-                src={`${game.video}${soundEnabled ? '&mute=0' : '&mute=1'}`}
-                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                allow="autoplay"
+                src={game.video + '&autoplay=1&mute=1'}
                 title={game.name}
+                style={{ display: 'none', position: 'absolute', top: '-10%', left: '-10%', width: '120%', height: '120%', zIndex: 2, border: 'none' }}
+                allow="autoplay"
               ></iframe>
-            )}
-            <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', background: 'rgba(0,0,0,0.6)', padding: '0.5rem' }}>
+            </div>
+            <div style={{ padding: '0.5rem' }}>
               <h2 style={{ fontSize: '1rem', fontWeight: '600' }}>{game.name}</h2>
               <p style={{ fontSize: '0.875rem', marginTop: '0.25rem' }}>{game.description}</p>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.25rem' }}>
